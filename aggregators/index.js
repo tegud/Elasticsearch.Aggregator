@@ -5,6 +5,8 @@ var path = require('path');
 var _ = require('lodash');
 var Promise = require('bluebird');
 
+var utilities = require('../lib/utilities.js')
+
 var modules;
 
 function loadModules() {
@@ -21,13 +23,17 @@ function loadModules() {
 			modules = _.chain(files).filter(function(file) { 
 				return (file !== 'index.js' && file !== 'utilities.js') || file.lastIndexOf('.') < 0;
 				}).map(function(file) {
+
+				var isJson = file.indexOf('.json') > -1;
 				var moduleName = file.substring(0, file.indexOf('.'));
 				
 				return { 
 					name: moduleName,
-					module: require('./' + moduleName)
+					module: isJson ? utilities.loadStandardQueryFromFile(__dirname + '/' + file) : require('./' + moduleName)
 				};
 			}).value();
+
+			loadModules = resolve.bind(undefined, modules);
 			
 			resolve(modules);
 		});

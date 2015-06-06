@@ -1,0 +1,81 @@
+{
+	"filters": {
+		"filtered":{
+			"filter":{
+				"bool":{
+					"must":[
+						{
+							"term":{
+								"type":"lr_varnish_request"
+							}
+						}
+					]
+				}
+			}
+		}
+	},
+	"aggregations": {
+		"pageType": {
+			"terms": {
+				"field": "url_page_type.raw",
+				"size": 1000
+			},
+	        "aggs": {
+				"test": {
+					"filter": {
+	                    "term": {
+	                        "isTestBooking": true
+	                    }
+	                }
+				},
+				"live": {
+					"filter": {
+	                    "term": {
+	                        "isTestBooking": false
+	                    }
+	                }
+				}
+	        }
+		},
+		"affiliate": {
+			"terms": {
+				"field": "affiliateName.raw",
+				"size": 1000
+			},
+	        "aggs": {
+				"test": {
+					"filter": {
+	                    "term": {
+	                        "isTestBooking": true
+	                    }
+	                }
+				},
+				"live": {
+					"filter": {
+	                    "term": {
+	                        "isTestBooking": false
+	                    }
+	                }
+				}
+	        }
+		},
+		"test": {
+			"filter": {
+	            "term": {
+	                "isTestBooking": true
+	            }
+	        }
+		},
+		"live": {
+			"filter": {
+	            "term": {
+	                "isTestBooking": false
+	            }
+	        }
+		}
+	},
+	"metrics": {
+		"totalCommission": { "sum": { "field": "commissionValue" } },
+		"totalValue": { "sum": { "field": "totalAmountGbp" } }
+	}
+}
